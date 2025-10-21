@@ -3,6 +3,12 @@ __pycache__/
 *.py[codz]
 *$py.class
 
+# ignore the data folder
+data/
+data/*
+# Ignore all .env files
+*.env
+
 # C extensions
 *.so
 
