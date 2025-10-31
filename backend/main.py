@@ -37,7 +37,12 @@ class BookRecommendationResponse(BaseModel):
     recommendations: List[str] 
 
 # load sampled book ratings data for the recommendation system
-data = pd.read_csv('/Users/avikumart/Documents/GitHub/Book-recommendation-system/data/sampled_book_ratings.csv')
+file_path = '/Users/avikumart/Documents/GitHub/Book-recommendation-system/data/sampled_book_ratings.csv'
+
+# define function to load data
+def load_data(file_path: str) -> pd.DataFrame:
+    return pd.read_csv(file_path)
+data = load_data(file_path)
 
 # create user-item matrix
 user_item_matrix, user_map, item_map = create_user_item_matrix(data)
