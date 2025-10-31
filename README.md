@@ -54,10 +54,67 @@ A book recommendation system can have many benefits for the students and users a
 - Results can be evaluated based on the Precision-Recall curve, RMSE, MAP and relevance judgment scoring, such as discounted cumulative gains, to ensure the system is validated for real-world use cases.
 - For the book recommendation system, tools such as OpenAI/HuggingFace, Streamlit for the UI, FastAPI, the scikit-learn toolkit, LangChain, pandas, numpy, and the Matplotlib visualisation toolkit will be used.
 
-
 ### Tools and techniques used
 
+- FastAPI
+- Pandas
+- Singular Vector Decompositin (SVD)
+- OpenAI 
+
 ### Setting up the project
+Clone the Repository
+
+```
+git clone [https://github.com/your-username/Book-recommendation-system.git](https://github.com/your-username/Book-recommendation-system.git)
+cd Book-recommendation-system
+```
+
+(Replace your-username with your actual GitHub username if you've forked it, or use the original repo URL)
+
+Create and Activate Conda Environment
+This project uses Conda to manage dependencies.
+
+# Create the environment from the .yml file
+conda env create -f environment.yml
+
+# Activate the environment
+conda activate book-rec-system 
+
+
+(Note: Replace book-rec-system if your environment.yml specifies a different name).
+
+Add Data
+This project requires book and rating datasets to function. Place your raw data files (e.g., books.csv, ratings.csv) into the /data/ directory.
+
+Set Up API Keys
+The LLM features (e.g., OpenAI) require an API key. Set this as an environment variable. A common way to do this is to create a .env file in the /backend directory:
+
+File: /backend/.env
+
+OPENAI_API_KEY='your_api_key_here'
+
+
+The backend code (e.g., in main.py or llmrec.py) will need to be configured to load this variable.
+
+Run the Backend Server (FastAPI)
+In your terminal, navigate to the backend directory and run the FastAPI server using uvicorn.
+
+cd backend
+uvicorn main:app --reload
+
+
+The server will typically be available at http://127.0.0.1:8000.
+
+Run the Frontend Application (Streamlit)
+Open a new terminal (leave the backend server running). Activate your conda environment again in this new terminal.
+
+# Make sure you are in the root project directory
+conda activate book-rec-system
+streamlit run frontend/app.py
+
+
+Your default web browser should open automatically to the Streamlit app, which will be available at http://localhost:8501.
+
 
 ### Contributing to the project
 

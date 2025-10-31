@@ -65,6 +65,7 @@ def recommend_items(item_ratings: ItemRatings):
 def llm_recommend_books(request: BookTitleRequest):
     try:
         prompt = f"Recommend 5 books similar to the book titled '{request.titles[0]}' and '{request.titles[1]}'. Provide only the book titles in a list format."
+        # Call OpenAI API to get recommendations
         response = openai.Completion.create(
             engine="text-davinci-003",
             prompt=prompt,
