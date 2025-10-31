@@ -9,21 +9,25 @@ To eliminate the unnecessary search results, this project introduces an AI-power
 
 ### Repository structure
 
-/book-recommedataion-system
-├── environment.yml
-|-- .gitignore
-|-- LICENSE
-├── README.md
-|-- /data
-|-- /nbs
-├── /backend
-│   ├── main.py             # FastAPI application entry point, defines endpoints
-│   ├── collabfiltering.py     # Contains collaborative filtering logic
-│   ├── llmrec.py     
-└── /frontend
-    └── app.py    # Streamlit application (the user interface)
+/book-recommendation-system
+├── environment.yml         # Conda environment file for dependencies
+├── .gitignore              # Git ignore file
+├── LICENSE                 # Project license file
+├── README.md               # This README file
+│
+├── /data/                  # Directory for storing datasets (e.g., ratings, books info)
+│
+├── /nbs/                   # Directory for Jupyter notebooks (e.g., EDA, model prototyping)
+│
+├── /backend/               # Source code for the FastAPI backend
+│   ├── main.py             # FastAPI application entry point, defines API endpoints
+│   ├── collabfiltering.py  # Module for collaborative filtering logic
+│   └── llmrec.py           # Module for LLM-based recommendation logic
+│
+└── /frontend/              # Source code for the Streamlit frontend
+    └── app.py              # Main Streamlit application file (the user interface)
 
- 
+
 ### System diagram
 
 ### Benefits of the system
