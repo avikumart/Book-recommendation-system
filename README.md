@@ -8,6 +8,21 @@ Identifying the right books and information for academic or personal growth purp
 To eliminate the unnecessary search results, this project introduces an AI-powered recommender system that takes users' interests into account by expanding the query based on the search query using generative large language models and retrieves relevant books with authors and publication information from the databases. The system combines content-based filtering using item-user matrices, text clustering techniques and generative AI models to produce accurate and precise book recommendations to the users.
 
 ### Repository structure
+
+/book-recommedataion-system
+├── environment.yml
+|-- .gitignore
+|-- LICENSE
+├── README.md
+|-- /data
+|-- /nbs
+├── /backend
+│   ├── main.py             # FastAPI application entry point, defines endpoints
+│   ├── collabfiltering.py     # Contains collaborative filtering logic
+│   ├── llmrec.py     
+└── /frontend
+    └── app.py    # Streamlit application (the user interface)
+
  
 ### System diagram
 
