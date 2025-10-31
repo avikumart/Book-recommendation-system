@@ -9,6 +9,7 @@ To eliminate the unnecessary search results, this project introduces an AI-power
 
 ### Repository structure
 
+```
 /book-recommendation-system
 ├── environment.yml         # Conda environment file for dependencies
 ├── .gitignore              # Git ignore file
@@ -26,7 +27,7 @@ To eliminate the unnecessary search results, this project introduces an AI-power
 │
 └── /frontend/              # Source code for the Streamlit frontend
     └── app.py              # Main Streamlit application file (the user interface)
-
+```
 
 ### System diagram
 
