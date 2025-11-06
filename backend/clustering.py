@@ -7,6 +7,9 @@ import pandas as pd
 import numpy as np
 import os 
 
+# open ai api key
+openai.api_key = os.getenv("OPENAI_API_KEY")
+
 # run the collaborative filtering model and llmrec function to generate recommendations which will be clustered
 # load sampled book ratings data for the recommendation system
 path = '/Users/avikumart/Documents/GitHub/Book-recommendation-system/data/'

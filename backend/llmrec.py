@@ -17,6 +17,7 @@ def get_book_recommendations(prompt, api_key, model="gpt-4", max_tokens=150):
     recommendations = response.choices[0].message['content'].strip()
     return recommendations
 
+
 # Example usage:
 # api_key = "your_openai_api_key"
 # prompt = "Can you recommend some science fiction books similar to Dune?"
