@@ -59,7 +59,7 @@ def health_check():
 @app.post("/recommend", response_model=RecommendedItems)
 def recommend_items(item_ratings: ItemRatings):
     try:
-        recommended_items = item_cf.get_similar_items(item_ratings.isbn, n=10)
+        recommended_items = item_cf.get_similar_items(item_ratings.isbn, n=5)
         recommended_titles = data[data['isbn'].isin(recommended_items)]['book_title'].tolist()
         return RecommendedItems(isbn=item_ratings.isbn, recommended_items=recommended_items, item_book_titles=recommended_titles)
     except Exception as e:
@@ -69,7 +69,7 @@ def recommend_items(item_ratings: ItemRatings):
 @app.post("/llm_recommend", response_model=BookRecommendationResponse)
 def llm_recommend_books(request: BookTitleRequest):
     try:
-        prompt = f"Recommend 5 books similar to the book titled '{request.titles[0]}' and '{request.titles[1]}'. Provide only the book titles in a list format."
+        prompt = f"Recommend 5 books similar to the book titled '{request.titles[0]}', '{request.titles[1]}', '{request.titles[2]}', '{request.titles[3]}' and '{request.titles[4]}'. Provide only the book titles in a list format."
         # Call OpenAI API to get recommendations
         response = openai.Completion.create(
             engine="text-davinci-003",

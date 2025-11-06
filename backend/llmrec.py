@@ -1,5 +1,6 @@
 # write a function to get book recommendations from OpenAI API
-import openai  
+import openai 
+
 def get_book_recommendations(prompt, api_key, model="gpt-4", max_tokens=150):
     openai.api_key = api_key
     response = openai.ChatCompletion.create(
