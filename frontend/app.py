@@ -1,4 +1,8 @@
 import streamlit as st
+import requests
+import openai
+import pandas as pd
+import backend.clustering
 
 # Set page configuration
 st.set_page_config(
@@ -19,14 +23,72 @@ if api_key:
 else:
     st.sidebar.warning("Please enter your API Key to proceed.")
 
-# create the user interface for the book recommendation system to take user input of the book name
+# store the openai key in session state
+if "openai_key" not in st.session_state:
+    st.session_state["openai_key"] = api_key
+
+openai.api_key = st.session_state["openai_key"]
+
+# create the user interface for the book recommendation system to take user input of the isbn number
 st.header("Get Book Recommendations")
-book_name = st.text_input("Enter a book name you like:")
+isbn = st.text_input("Enter an ISBN number you like:")
 if st.button("Get Recommendations"):
-    if book_name:
+    if isbn:
         # Placeholder for recommendation logic
-        st.write(f"Recommendations for '{book_name}':")
+        st.write(f"Recommendations for ISBN '{isbn}':")
         # Here you would call your recommendation function and display results
         st.write("1. Book A\n2. Book B\n3. Book C")  # Example output
     else:
-        st.error("Please enter a book name to get recommendations.")    
+        st.error("Please enter an ISBN number to get recommendations.")
+
+# streamlit front end to call backend API and display recommendations
+if api_key and isbn:
+    response = requests.post(
+        "http://localhost:8000/recommend",
+        json={"isbn": isbn, "api_key": api_key}
+    )
+    if response.status_code == 200:
+        recommendations = response.json().get("recommendations", [])
+        if recommendations:
+            st.subheader("Recommended Books:")
+            for idx, book in enumerate(recommendations, 1):
+                st.write(f"{idx}. {book}")
+        else:
+            st.write("No recommendations found.")
+    else:
+        st.error("Failed to fetch recommendations from the backend.")
+
+# llm recommend api call for the llm rec display
+if api_key and isbn:
+    response = requests.post(
+        "http://localhost:8000/llm_recommend",
+        json={"book_titles": recommendations, "api_key": api_key}
+    )
+    if response.status_code == 200:
+        llm_recommendations = response.json().get("llm_recommendations", [])
+        if llm_recommendations:
+            st.subheader("LLM Recommended Books:")
+            for idx, book in enumerate(llm_recommendations, 1):
+                st.write(f"{idx}. {book}")
+        else:
+            st.write("No LLM recommendations found.")
+    else:
+        st.error("Failed to fetch LLM recommendations from the backend.")
+
+# cluster-based recommendations with streamlit frontend functions
+if api_key and isbn:
+    recs = backend.clustering.generate_recommendations(isbn)
+    if recs:
+        st.subheader("Cluster-Based Recommended Books:")
+        for idx, book in enumerate(recs, 1):
+            st.write(f"{idx}. {book}")
+    else:
+        st.write("No cluster-based recommendations found.")
+    cluster_recs = backend.clustering.cluster_recommendations(recs)
+    cluster_descriptions = backend.clustering.get_cluster_descriptions(cluster_recs)
+    if cluster_descriptions:
+        st.subheader("Cluster Descriptions:")
+        for idx, desc in enumerate(cluster_descriptions, 1):
+            st.write(f"{idx}. {desc}")
+    else:
+        st.write("No cluster descriptions found.")  
