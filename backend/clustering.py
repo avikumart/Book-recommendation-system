@@ -40,7 +40,7 @@ def cluster_recommendations(llmrecs, n_clusters=2, random_state=42):
     """
     Cluster the generated LLM recommendations using tfidf vectorization and apply kmeans algorithm.
     """
-    vectorizer = TfidfVectorizer(stop_words='english')
+    vectorizer = TfidfVectorizer(stop_words='english', max_features=1000)
     # verify if the llmrecs is a list of strings
     if not all(isinstance(rec.strip(), str) for rec in llmrecs):
         raise ValueError("All recommendations must be strings.")

@@ -79,11 +79,11 @@ if api_key and isbn:
 if isbn:
     recs = backend.clustering.generate_recommendations(isbn)
     if recs:
-        st.subheader("Cluster-Based Recommended Books:")
+        st.subheader("User query based Recommended Books:")
         for idx, book in enumerate(recs, 1):
             st.write(f"{idx}. {book}")
     else:
-        st.write("No cluster-based recommendations found.")
+        st.write("No user query based recommendations found.")
     cluster_recs = backend.clustering.cluster_recommendations(recs)
     cluster_descriptions = backend.clustering.generate_cluster_descriptions(cluster_recs)
     if cluster_descriptions:
