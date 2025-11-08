@@ -76,7 +76,7 @@ if api_key and isbn:
         st.error("Failed to fetch LLM recommendations from the backend.")
 
 # cluster-based recommendations with streamlit frontend functions
-if api_key and isbn:
+if isbn:
     recs = backend.clustering.generate_recommendations(isbn)
     if recs:
         st.subheader("Cluster-Based Recommended Books:")
@@ -85,7 +85,7 @@ if api_key and isbn:
     else:
         st.write("No cluster-based recommendations found.")
     cluster_recs = backend.clustering.cluster_recommendations(recs)
-    cluster_descriptions = backend.clustering.get_cluster_descriptions(cluster_recs)
+    cluster_descriptions = backend.clustering.generate_cluster_descriptions(cluster_recs)
     if cluster_descriptions:
         st.subheader("Cluster Descriptions:")
         for idx, desc in enumerate(cluster_descriptions, 1):
