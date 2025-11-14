@@ -20,13 +20,11 @@ To eliminate the unnecessary search results, this project introduces an AI-power
 │
 ├── /nbs/                   # Directory for Jupyter notebooks (e.g., EDA, model prototyping)
 │
-├── /backend/               # Source code for the FastAPI backend
-│   ├── main.py             # FastAPI application entry point, defines API endpoints
+├── ├── main.py             # FastAPI application entry point, defines API endpoints
 │   ├── collabfiltering.py  # Module for collaborative filtering logic
 │   └── llmrec.py           # Module for LLM-based recommendation logic
 │
-└── /frontend/              # Source code for the Streamlit frontend
-    └── app.py              # Main Streamlit application file (the user interface)
+└── |── app.py              # Main Streamlit application file (the user interface)
 ```
 
 ### System diagram
