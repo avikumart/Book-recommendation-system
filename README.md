@@ -23,6 +23,7 @@ To eliminate the unnecessary search results, this project introduces an AI-power
 ├── ├── main.py             # FastAPI application entry point, defines API endpoints
 │   ├── collabfiltering.py  # Module for collaborative filtering logic
 │   └── llmrec.py           # Module for LLM-based recommendation logic
+|   |__ clustering.py
 │
 └── |── app.py              # Main Streamlit application file (the user interface)
 ```
