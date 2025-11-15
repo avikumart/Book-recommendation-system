@@ -37,7 +37,7 @@ class BookRecommendationResponse(BaseModel):
     recommendations: List[str] 
 
 # load sampled book ratings data for the recommendation system
-file_path = '/Users/avikumart/Documents/GitHub/Book-recommendation-system/data/sampled_book_ratings.csv'
+file_path = './data/sampled_book_ratings.csv'
 
 # define function to load data
 def load_data(file_path: str) -> pd.DataFrame:
@@ -69,18 +69,20 @@ def recommend_items(item_ratings: ItemRatings):
 @app.post("/llm_recommend", response_model=BookRecommendationResponse)
 def llm_recommend_books(request: BookTitleRequest):
     try:
-        prompt = f"Recommend 5 books similar to the book titled '{request.titles[0]}', '{request.titles[1]}', '{request.titles[2]}', '{request.titles[3]}' and '{request.titles[4]}'. Provide only the book titles in a list format."
+        titles_list = "', '".join(request.titles)
+        prompt = f"Recommend 5 books similar to the book titled '{titles_list}'. Provide only the book titles in a list format."
         # Call OpenAI API to get recommendations
-        response = openai.Completion.create(
-            engine="text-davinci-003",
+        client = openai.OpenAI()
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
             prompt=prompt,
             max_tokens=150,
             n=1,
             stop=None,
             temperature=0.7,
         )
-        recommendations_text = response.choices[0].text.strip()
+        recommendations_text = response.choices[0].message['content'].strip()
         recommendations = [title.strip() for title in recommendations_text.split('\n') if title.strip()]
-        return BookRecommendationResponse(title=request.title, recommendations=recommendations)
+        return BookRecommendationResponse(titles=request.titles, recommendations=recommendations)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
