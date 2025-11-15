@@ -36,11 +36,19 @@ class BookRecommendationResponse(BaseModel):
     recommendations: List[str] 
 
 # load sampled book ratings data for the recommendation system
-file_path = './data/sampled_book_ratings.csv'
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+file_path = os.path.join(BASE_DIR, 'data', 'sampled_book_ratings.csv')
 
 # define function to load data
 def load_data(file_path: str) -> pd.DataFrame:
-    return pd.read_csv(file_path, encoding='latin-1') 
+    if not os.path.exists(file_path):
+        raise FileNotFoundError(f"File not found: {file_path}")
+    data = pd.read_csv(file_path, encoding='latin-1', index_col=False) 
+    data.columns = data.columns.str.strip()  # Remove any leading/trailing whitespace from column names
+
+    return data
+
+# read the data 
 data = load_data(file_path)
 
 # create user-item matrix
