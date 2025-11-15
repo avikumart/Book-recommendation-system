@@ -1,7 +1,7 @@
 from sklearn.cluster import KMeans
 from sklearn.feature_extraction.text import TfidfVectorizer
-from backend.llmrec import get_book_recommendations
-from backend.collabfiltering import ItemBasedCF, create_user_item_matrix
+from llmrec import get_book_recommendations
+from collabfiltering import ItemBasedCF, create_user_item_matrix
 import openai
 import pandas as pd
 import numpy as np

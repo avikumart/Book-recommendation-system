@@ -2,7 +2,7 @@ import streamlit as st
 import requests
 import openai
 import pandas as pd
-import backend.clustering
+import clustering
 
 # Set page configuration
 st.set_page_config(
@@ -36,8 +36,6 @@ if st.button("Get Recommendations"):
     if isbn:
         # Placeholder for recommendation logic
         st.write(f"Recommendations for ISBN '{isbn}':")
-        # Here you would call your recommendation function and display results
-        st.write("1. Book A\n2. Book B\n3. Book C")  # Example output
     else:
         st.error("Please enter an ISBN number to get recommendations.")
 
@@ -77,15 +75,15 @@ if api_key and isbn:
 
 # cluster-based recommendations with streamlit frontend functions
 if isbn:
-    recs = backend.clustering.generate_recommendations(isbn)
+    recs = clustering.generate_recommendations(isbn)
     if recs:
         st.subheader("User query based Recommended Books:")
         for idx, book in enumerate(recs, 1):
             st.write(f"{idx}. {book}")
     else:
         st.write("No user query based recommendations found.")
-    cluster_recs = backend.clustering.cluster_recommendations(recs)
-    cluster_descriptions = backend.clustering.generate_cluster_descriptions(cluster_recs)
+    cluster_recs = clustering.cluster_recommendations(recs)
+    cluster_descriptions = clustering.generate_cluster_descriptions(cluster_recs)
     if cluster_descriptions:
         st.subheader("Cluster Descriptions:")
         for idx, desc in enumerate(cluster_descriptions, 1):

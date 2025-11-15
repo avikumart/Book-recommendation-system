@@ -13,7 +13,7 @@ load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # import the collaborative filtering classes and functions
-from backend.collabfiltering import ItemBasedCF, create_user_item_matrix
+from collabfiltering import ItemBasedCF, create_user_item_matrix
 
 # Initialize FastAPI app
 app = FastAPI()
