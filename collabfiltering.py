@@ -4,9 +4,7 @@ import numpy as np
 
 # define the user item matrix function that creates a user-item matrix from the sampled book ratings dataframe
 def create_user_item_matrix(data):
-    user_item_matrix = data.pivot_table(index='user_id', 
-                                        columns='isbn', 
-                                        values='book_rating').fillna(0)
+    user_item_matrix = data.pivot_table(index='user_id', columns='isbn', values='book_rating').fillna(0)
     
     # create the user mapper function
     user_mapper = {user: i for i, user in enumerate(user_item_matrix.index)}
