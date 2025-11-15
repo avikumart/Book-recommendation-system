@@ -40,7 +40,7 @@ file_path = './data/sampled_book_ratings.csv'
 
 # define function to load data
 def load_data(file_path: str) -> pd.DataFrame:
-    return pd.read_csv(file_path)
+    return pd.read_csv(file_path, encoding='latin-1') 
 data = load_data(file_path)
 
 # create user-item matrix
