@@ -21,7 +21,6 @@ app = FastAPI()
 # pydantics models for request and response bodies
 class ItemRatings(BaseModel):
     isbn: int
-    ratings: Dict[int, float]  # item_id: rating
 
 class RecommendedItems(BaseModel):
     isbn: int
