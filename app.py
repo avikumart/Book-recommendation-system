@@ -1,8 +1,14 @@
+from typing import List
 import streamlit as st
 import requests
 import openai
 import pandas as pd
 import clustering
+import os
+from dotenv import load_dotenv
+
+# import the collaborative filtering classes and functions
+from collabfiltering import ItemBasedCF, create_user_item_matrix
 
 # Set page configuration
 st.set_page_config(
@@ -29,6 +35,20 @@ if "openai_key" not in st.session_state:
 
 openai.api_key = st.session_state["openai_key"]
 
+# write the load data function as per the main.py file
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+file_path = os.path.join(BASE_DIR, 'data', 'sampled_book_ratings.json')
+
+@st.cache_data
+def load_data(file_path: str) -> pd.DataFrame:
+    try:
+        book_ratings = pd.read_json(file_path, orient='records', lines=True)
+        return book_ratings
+    except Exception as e:
+        st.error(f"Error loading data: {e}")
+        return pd.DataFrame()  # Return an empty DataFrame in case of error
+
+data = load_data(file_path) 
 # create the user interface for the book recommendation system to take user input of the isbn number
 st.header("Get Book Recommendations")
 isbn = st.text_input("Enter an ISBN number you like:")
@@ -39,39 +59,73 @@ if st.button("Get Recommendations"):
     else:
         st.error("Please enter an ISBN number to get recommendations.")
 
-# streamlit front end to call backend API and display recommendations
-if api_key and isbn:
-    response = requests.post(
-        "http://localhost:8000/recommend",
-        json={"isbn": isbn, "api_key": api_key}
-    )
-    if response.status_code == 200:
-        recommendations = response.json().get("recommendations", [])
-        if recommendations:
-            st.subheader("Recommended Books:")
-            for idx, book in enumerate(recommendations, 1):
-                st.write(f"{idx}. {book}")
-        else:
-            st.write("No recommendations found.")
-    else:
-        st.error("Failed to fetch recommendations from the backend.")
+# create user-item matrix
+user_item_matrix, user_map, item_map = create_user_item_matrix(data)
 
-# llm recommend api call for the llm rec display
-if api_key and isbn:
-    response = requests.post(
-        "http://localhost:8000/llm_recommend",
-        json={"book_titles": recommendations, "api_key": api_key}
-    )
-    if response.status_code == 200:
-        llm_recommendations = response.json().get("llm_recommendations", [])
-        if llm_recommendations:
-            st.subheader("LLM Recommended Books:")
-            for idx, book in enumerate(llm_recommendations, 1):
-                st.write(f"{idx}. {book}")
+# create item-based collaborative filtering model
+item_cf = ItemBasedCF(user_item_matrix)
+
+# streamlit front end to call the recommend_items function from the main.py file and display the results
+if isbn:
+    try:
+        recommended_items = item_cf.get_similar_items(int(isbn), n=5)
+        recommended_titles = data[data['isbn'].isin(recommended_items)]['book_title'].tolist()
+        st.subheader("Recommended Books:")
+        for idx, title in enumerate(recommended_titles, 1):
+            st.write(f"{idx}. {title}")
+    except Exception as e:
+        st.error(f"Error getting recommendations: {e}")
+
+# streamlit front end to call the llm recommendation function from the main.py file and display the results
+if isbn:
+    try:
+        titles = data[data['isbn'] == int(isbn)]['book_title'].tolist()
+        if not titles:
+            st.error(f"No book found with ISBN {isbn}")
         else:
-            st.write("No LLM recommendations found.")
+            title = titles[0]
+            st.write(f"Getting LLM-based recommendations for '{title}'...")
+            client = openai.OpenAI()
+            response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant that provides book recommendations based on user input."},
+                {"role": "user", "content": f"Please recommend 5 books similar to the book {title}."}
+            ],
+                max_tokens=150,
+                n=1,
+                stop=None,
+                temperature=0.7,
+                    )
+        recommendations_text = response.choices[0].message['content'].strip()
+        recommendations = [title.strip() for title in recommendations_text.split('\n') if title.strip()]
+        st.subheader("LLM-based Recommended Books:")
+        for idx, title in enumerate(recommendations, 1):
+            st.write(f"{idx}. {title}")
+    except Exception as e:
+        st.error(f"Error getting LLM-based recommendations: {e}")
+
+# functions that combiine the collaborative filtering and llm recommendations to provide a more comprehensive recommendation list
+def combined_recommendations(isbn: str, n: int = 5) -> List[str]:
+    print(f"Getting combined recommendations for ISBN: {isbn}")
+    try:
+        combined_recs = set()
+        # Get item-based collaborative filtering recommendations
+        combined_recs.update(recommended_titles + recommendations)
+        return list(combined_recs)[:n]
+    except Exception as e:
+        st.error(f"Error getting combined recommendations: {e}")
+        return []
+    
+# display in strmlit frontend using dropdown container
+if isbn:
+    recs = combined_recommendations(isbn)
+    if recs:
+        st.subheader("Combined Recommended Books:")
+        for idx, book in enumerate(recs, 1):
+            st.write(f"{idx}. {book}")
     else:
-        st.error("Failed to fetch LLM recommendations from the backend.")
+        st.write("No combined recommendations found.")
 
 # cluster-based recommendations with streamlit frontend functions
 if isbn:

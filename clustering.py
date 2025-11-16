@@ -13,11 +13,11 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 # run the collaborative filtering model and llmrec function to generate recommendations which will be clustered
 # load sampled book ratings data for the recommendation system
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-file_path = os.path.join(BASE_DIR, 'data', 'sampled_book_ratings.csv')
+file_path = os.path.join(BASE_DIR, 'data', 'sampled_book_ratings.json')
 
 # define function to load data
 def load_data(file_path: str) -> pd.DataFrame:
-    return pd.read_csv(file_path)
+    return pd.read_json(file_path, orient='records', lines=True)
 data = load_data(file_path)
 
 # create user-item matrix
