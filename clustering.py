@@ -1,30 +1,13 @@
 from sklearn.cluster import KMeans
 from sklearn.feature_extraction.text import TfidfVectorizer
 from llmrec import get_book_recommendations
-from collabfiltering import ItemBasedCF, create_user_item_matrix
 import openai
 import pandas as pd
 import numpy as np
 import os 
 
-# run the collaborative filtering model and llmrec function to generate recommendations which will be clustered
-# load sampled book ratings data for the recommendation system
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-file_path = os.path.join(BASE_DIR, 'data', 'sampled_book_ratings.json')
-
-# define function to load data
-def load_data(file_path: str) -> pd.DataFrame:
-    return pd.read_json(file_path, orient='records', lines=True)
-data = load_data(file_path)
-
-# create user-item matrix
-user_item_matrix, user_map, item_map = create_user_item_matrix(data)
-
-# create item-based collaborative filtering model
-item_cf = ItemBasedCF(user_item_matrix)
-
 # write function that takes isbn as a input to generate recommendations from the collaborative filtering model and then from llm apis in sequential manner
-def generate_recommendations(isbn):
+def generate_recommendations(isbn, item_cf, data):
     # Get recommendations from collaborative filtering model
     collab_recommendations = item_cf.get_similar_items(isbn, n=5)
     # Get book titles for collaborative filtering recommendations

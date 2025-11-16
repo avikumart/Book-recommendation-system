@@ -32,12 +32,13 @@ else:
 
 # write the load data function as per the main.py file
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-file_path = os.path.join(BASE_DIR, 'data', 'sampled_book_ratings.json')
+file_path = os.path.join(BASE_DIR, 'data', 'user_item_matrix.csv')
 
-@st.cache_data
 def load_data(file_path: str) -> pd.DataFrame:
     try:
-        book_ratings = pd.read_json(file_path, orient='records', lines=True)
+        book_ratings = pd.read_csv(file_path)
+        print(f"Data loaded successfully from {file_path}")
+        print(f"Data shape: {book_ratings.shape}")
         return book_ratings
     except Exception as e:
         st.error(f"Error loading data: {e}")
@@ -55,16 +56,20 @@ if st.button("Get Recommendations"):
         st.error("Please enter an ISBN number to get recommendations.")
 
 # create user-item matrix
-user_item_matrix, user_map, item_map = create_user_item_matrix(data)
+user_map, item_map = create_user_item_matrix(data)
 
 # create item-based collaborative filtering model
-item_cf = ItemBasedCF(user_item_matrix)
+item_cf = ItemBasedCF(data)
+
+# load the sampled book ratings data
+file_path_sampled = os.path.join(BASE_DIR, 'data', 'sampled_book_ratings.csv')
+sampled_data = load_data(file_path_sampled)
 
 # streamlit front end to call the recommend_items function from the main.py file and display the results
 if isbn:
     try:
         recommended_items = item_cf.get_similar_items(int(isbn), n=5)
-        recommended_titles = data[data['isbn'].isin(recommended_items)]['book_title'].tolist()
+        recommended_titles = sampled_data[sampled_data['isbn'].isin(recommended_items)]['book_title'].tolist()
         st.subheader("Recommended Books:")
         for idx, title in enumerate(recommended_titles, 1):
             st.write(f"{idx}. {title}")
@@ -74,25 +79,26 @@ if isbn:
 # streamlit front end to call the llm recommendation function from the main.py file and display the results
 if isbn and "openai_client" in st.session_state:
     try:
-        titles = data[data['isbn'] == int(isbn)]['book_title'].tolist()
+        titles = sampled_data[sampled_data['isbn'] == int(isbn)]['book_title'].tolist()
         if not titles:
             st.error(f"No book found with ISBN {isbn}")
         else:
-            title = titles[0]
-            st.write(f"Getting LLM-based recommendations for '{title}'...")
+            isbn = int(isbn)
+            st.write(f"Getting LLM-based recommendations for '{isbn}'...")
             client = st.session_state["openai_client"]
-            response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[
+            response = client.chat.completions.create(model="gpt-3.5-turbo",
+                messages=[
                 {"role": "system", "content": "You are a helpful assistant that provides book recommendations based on user input."},
-                {"role": "user", "content": f"Please recommend 5 books similar to the book {title}."}
-            ],
+                {"role": "user", "content": f"Please recommend 5 books similar to the book {isbn}."}],
                 max_tokens=150,
                 n=1,
                 stop=None,
                 temperature=0.7,
                     )
         recommendations_text = response.choices[0].message.content.strip()
+        if recommendations_text:
+            st.write("LLM-based recommendations received:")
+            st.write(recommendations_text)
         recommendations = [title.strip() for title in recommendations_text.split('\n') if title.strip()]
         st.subheader("LLM-based Recommended Books:")
         for idx, title in enumerate(recommendations, 1):
@@ -101,7 +107,7 @@ if isbn and "openai_client" in st.session_state:
         st.error(f"Error getting LLM-based recommendations: {e}")
 
 # functions that combiine the collaborative filtering and llm recommendations to provide a more comprehensive recommendation list
-def combined_recommendations(recommended_titles, recommendations,isbn: str, n: int = 5) -> List[str]:
+def combined_recommendations(recommended_titles, recommendations, isbn, n: int = 5) -> List[str]:
     print(f"Getting combined recommendations for ISBN: {isbn}")
     try:
         combined_recs = set()
@@ -124,7 +130,7 @@ if isbn:
 
 # cluster-based recommendations with streamlit frontend functions
 if isbn and "openai_client" in st.session_state:
-    recs = clustering.generate_recommendations(isbn)
+    recs = clustering.generate_recommendations(int(isbn), item_cf, sampled_data)
     if recs:
         st.subheader("User query based Recommended Books:")
         for idx, book in enumerate(recs, 1):

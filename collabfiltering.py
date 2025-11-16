@@ -3,18 +3,19 @@ from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 
 # define the user item matrix function that creates a user-item matrix from the sampled book ratings dataframe
-def create_user_item_matrix(data):
-    user_item_matrix = data.pivot_table(index='user_id', columns='isbn', values='book_rating').fillna(0)
-    
+def create_user_item_matrix(data): 
+    # 2. Create pivot table (uses the correct column name)    
     # create the user mapper function
-    user_mapper = {user: i for i, user in enumerate(user_item_matrix.index)}
-    item_mapper = {item: i for i, item in enumerate(user_item_matrix.columns)}
-    return user_item_matrix, user_mapper, item_mapper
+    user_mapper = {user: i for i, user in enumerate(data.index)}
+    item_mapper = {item: i for i, item in enumerate(data.columns)}
+    return user_mapper, item_mapper
+
 
 # defin the class for the item based collaborative filtering
 class ItemBasedCF:
     def __init__(self, data):
-        self.user_item_matrix, self.user_mapper, self.item_mapper = create_user_item_matrix(data)
+        self.user_item_matrix = data
+        self.user_mapper, self.item_mapper = create_user_item_matrix(data)
         self.item_user_matrix = self.user_item_matrix.T
         self.similarity_matrix = cosine_similarity(self.item_user_matrix)
         self.similarity_df = pd.DataFrame(self.similarity_matrix, 
