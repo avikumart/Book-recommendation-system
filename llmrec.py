@@ -1,9 +1,9 @@
 # write a function to get book recommendations from OpenAI API
-import openai 
+import openai
+import streamlit as st
 
-def get_book_recommendations(prompt, api_key, model="gpt-3.5-turbo", max_tokens=150):
-    openai.api_key = api_key
-    client = openai.OpenAI()
+def get_book_recommendations(prompt, model="gpt-3.5-turbo", max_tokens=150):
+    client = openai.OpenAI(api_key=st.session_state["openai_api"])
     response = client.chat.completions.create(
         model=model,
         messages=[
@@ -15,7 +15,7 @@ def get_book_recommendations(prompt, api_key, model="gpt-3.5-turbo", max_tokens=
         stop=None,
         temperature=0.7,
     )
-    recommendations = response.choices[0].message['content'].strip()
+    recommendations = response.choices[0].message.content.strip()
     return recommendations
 
 

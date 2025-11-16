@@ -13,7 +13,7 @@ def generate_recommendations(isbn, item_cf, data):
     # Get book titles for collaborative filtering recommendations
     collab_titles = data[data['isbn'].isin(collab_recommendations)]['book_title'].tolist()
     # Get recommendations from LLM based on collaborative filtering recommendations
-    llm_recommendations = get_book_recommendations(f"Recommend books similar to: {', '.join(collab_titles)}", openai.api_key)
+    llm_recommendations = get_book_recommendations(f"Recommend books similar to: {', '.join(collab_titles)} or for {isbn}")
     return llm_recommendations
 
 def cluster_recommendations(llmrecs, n_clusters=2, random_state=42):

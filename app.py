@@ -25,8 +25,8 @@ st.title("📚 Book Recommendation System")
 st.sidebar.header("API Key Configuration")
 api_key = st.sidebar.text_input("Enter your API Key:", type="password")
 if api_key:
-    st.session_state["openai_client"] = openai.OpenAI(api_key=api_key)
-    st.sidebar.success("API Key and Client set successfully!")
+    st.session_state["openai_api"] = api_key
+    st.sidebar.success("API Key set successfully!")
 else:
     st.sidebar.warning("Please enter your API Key to proceed.")
 
@@ -65,6 +65,9 @@ item_cf = ItemBasedCF(data)
 file_path_sampled = os.path.join(BASE_DIR, 'data', 'sampled_book_ratings.csv')
 sampled_data = load_data(file_path_sampled)
 
+recommended_titles = []
+recommendations = []    
+
 # streamlit front end to call the recommend_items function from the main.py file and display the results
 if isbn:
     try:
@@ -85,7 +88,7 @@ if isbn and "openai_client" in st.session_state:
         else:
             isbn = int(isbn)
             st.write(f"Getting LLM-based recommendations for '{isbn}'...")
-            client = st.session_state["openai_client"]
+            client = openai.OpenAI(api_key=st.session_state["openai_api"])
             response = client.chat.completions.create(model="gpt-3.5-turbo",
                 messages=[
                 {"role": "system", "content": "You are a helpful assistant that provides book recommendations based on user input."},
