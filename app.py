@@ -88,7 +88,7 @@ if isbn and "openai_api" in st.session_state:
         response = client.chat.completions.create(model="gpt-3.5-turbo",
                 messages=[
                 {"role": "system", "content": "You are a helpful assistant that provides book recommendations based on user input."},
-                {"role": "user", "content": f"Please recommend 5 books similar to the book {', '.join([title for title in titles])}."}],
+                {"role": "user", "content": f"Please recommend  books similar to the {', '.join([title for title in titles])}."}],
                 max_tokens=150,
                 n=1,
                 stop=None,
@@ -111,12 +111,12 @@ def combined_recommendations(recommended_titles, recommendations, isbn) -> List[
         st.error(f"Error getting combined recommendations: {e}")
         return []
     
-# display in strmlit frontend using dropdown container
+# display in streamlit frontend using dropdown container
 if isbn:
     recs = combined_recommendations(recommended_titles, recommendations, isbn)
     if recs:
         st.subheader("Combined Recommended Books:")
-        for book in enumerate(recs, 1):
+        for _,book in enumerate(recs):
             st.write(f"{book}")
     else:
         st.write("No combined recommendations found.")
@@ -134,7 +134,7 @@ if isbn and "openai_api" in st.session_state:
     cluster_descriptions = clustering.generate_cluster_descriptions(cluster_recs)
     if cluster_descriptions:
         st.subheader("Cluster Descriptions:")
-        for idx, desc in enumerate(cluster_descriptions, 1):
-            st.write(f"{idx}. {desc}")
+        for label, item in cluster_descriptions.items():
+            st.write(f"Cluster description of the label {label}:\n {item}")
     else:
         st.write("No cluster descriptions found.")  
