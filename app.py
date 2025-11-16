@@ -25,15 +25,10 @@ st.title("📚 Book Recommendation System")
 st.sidebar.header("API Key Configuration")
 api_key = st.sidebar.text_input("Enter your API Key:", type="password")
 if api_key:
-    st.sidebar.success("API Key set successfully!")
+    st.session_state["openai_client"] = openai.OpenAI(api_key=api_key)
+    st.sidebar.success("API Key and Client set successfully!")
 else:
     st.sidebar.warning("Please enter your API Key to proceed.")
-
-# store the openai key in session state
-if "openai_key" not in st.session_state:
-    st.session_state["openai_key"] = api_key
-
-openai.api_key = st.session_state["openai_key"]
 
 # write the load data function as per the main.py file
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -77,7 +72,7 @@ if isbn:
         st.error(f"Error getting recommendations: {e}")
 
 # streamlit front end to call the llm recommendation function from the main.py file and display the results
-if isbn:
+if isbn and "openai_client" in st.session_state:
     try:
         titles = data[data['isbn'] == int(isbn)]['book_title'].tolist()
         if not titles:
@@ -85,7 +80,7 @@ if isbn:
         else:
             title = titles[0]
             st.write(f"Getting LLM-based recommendations for '{title}'...")
-            client = openai.OpenAI()
+            client = st.session_state["openai_client"]
             response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
@@ -106,7 +101,7 @@ if isbn:
         st.error(f"Error getting LLM-based recommendations: {e}")
 
 # functions that combiine the collaborative filtering and llm recommendations to provide a more comprehensive recommendation list
-def combined_recommendations(isbn: str, n: int = 5) -> List[str]:
+def combined_recommendations(recommended_titles, recommendations,isbn: str, n: int = 5) -> List[str]:
     print(f"Getting combined recommendations for ISBN: {isbn}")
     try:
         combined_recs = set()
@@ -119,7 +114,7 @@ def combined_recommendations(isbn: str, n: int = 5) -> List[str]:
     
 # display in strmlit frontend using dropdown container
 if isbn:
-    recs = combined_recommendations(isbn)
+    recs = combined_recommendations(recommended_titles, recommendations, isbn, n=5)
     if recs:
         st.subheader("Combined Recommended Books:")
         for idx, book in enumerate(recs, 1):
@@ -128,7 +123,7 @@ if isbn:
         st.write("No combined recommendations found.")
 
 # cluster-based recommendations with streamlit frontend functions
-if isbn:
+if isbn and "openai_client" in st.session_state:
     recs = clustering.generate_recommendations(isbn)
     if recs:
         st.subheader("User query based Recommended Books:")
