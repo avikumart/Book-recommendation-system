@@ -92,7 +92,7 @@ if isbn and "openai_client" in st.session_state:
                 stop=None,
                 temperature=0.7,
                     )
-        recommendations_text = response.choices[0].message['content'].strip()
+        recommendations_text = response.choices[0].message.content.strip()
         recommendations = [title.strip() for title in recommendations_text.split('\n') if title.strip()]
         st.subheader("LLM-based Recommended Books:")
         for idx, title in enumerate(recommendations, 1):
