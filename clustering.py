@@ -5,6 +5,7 @@ import openai
 import pandas as pd
 import numpy as np
 import os 
+import re   
 
 # write function that takes isbn as a input to generate recommendations from the collaborative filtering model and then from llm apis in sequential manner
 def generate_recommendations(isbn, item_cf, data):
@@ -25,15 +26,18 @@ def cluster_recommendations(llmrecs, n_clusters=2, random_state=42):
     if not all(isinstance(rec.strip(), str) for rec in llmrecs):
         raise ValueError("All recommendations must be strings.")
     else:
-        recs = [rec.split(':')[-1].strip() if ':' in rec else rec.strip() for rec in llmrecs]
-        X = vectorizer.fit_transform(recs)
+        pattern = re.compile(r"^\s*(?:\d+[\.\)]|\d+\s+)\s*(.*?)\s*$", re.MULTILINE)
+        matches = pattern.findall('\n'.join(llmrecs))
+        rec_list = [match.strip() for match in matches if match.strip()]
+        book_list = [rec.strip() for rec in rec_list if rec.strip()]
+        X = vectorizer.fit_transform(book_list)
 
-    model = KMeans(n_clusters=n_clusters, random_state=random_state)
-    labels = model.fit_predict(X)
+        model = KMeans(n_clusters=n_clusters, random_state=random_state)
+        labels = model.fit_predict(X)
 
-    # assign the labels to the recommendations
-    clustered_recommendations = list(zip(llmrecs, labels))
-    return clustered_recommendations
+        # assign the labels to the recommendations
+        clustered_recommendations = list(zip(book_list, labels))
+        return clustered_recommendations
 
 # function to generate descriptions for each cluster using llm api call
 def generate_cluster_descriptions(clustered_recommendations):
@@ -44,7 +48,7 @@ def generate_cluster_descriptions(clustered_recommendations):
     cluster_descriptions = {}
     for label, recs in cluster_dict.items():
         prompt = f"Generate a brief description for the following books: {', '.join(recs)}"
-        description = get_book_recommendations(prompt, openai.api_key)
+        description = get_book_recommendations(prompt)
         cluster_descriptions[label] = description
 
     return cluster_descriptions

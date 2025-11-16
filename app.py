@@ -71,7 +71,7 @@ recommendations = []
 # streamlit front end to call the recommend_items function from the main.py file and display the results
 if isbn:
     try:
-        recommended_items = item_cf.get_similar_items(int(isbn), n=5)
+        recommended_items = item_cf.get_similar_items(isbn, n=5)
         recommended_titles = sampled_data[sampled_data['isbn'].isin(recommended_items)]['book_title'].tolist()
         st.subheader("Recommended Books:")
         for idx, title in enumerate(recommended_titles, 1):
@@ -81,17 +81,14 @@ if isbn:
 
 # streamlit front end to call the llm recommendation function from the main.py file and display the results
 if isbn and "openai_api" in st.session_state:
-    titles = sampled_data[sampled_data['isbn'] == int(isbn)]['book_title'].tolist()
-    if not titles:
-        st.error(f"No book found with ISBN {isbn}")
-    else:
-        isbn = int(isbn)
-        st.write(f"Getting LLM-based recommendations for '{isbn}'...")
+    titles = sampled_data[sampled_data['isbn'] == isbn]['book_title'].tolist()
+    if titles:
+        st.write(f"Getting LLM-based recommendations for {', '.join([title for title in titles])}...")
         client = openai.OpenAI(api_key=st.session_state["openai_api"])
         response = client.chat.completions.create(model="gpt-3.5-turbo",
                 messages=[
                 {"role": "system", "content": "You are a helpful assistant that provides book recommendations based on user input."},
-                {"role": "user", "content": f"Please recommend 5 books similar to the book {isbn}."}],
+                {"role": "user", "content": f"Please recommend 5 books similar to the book {', '.join([title for title in titles])}."}],
                 max_tokens=150,
                 n=1,
                 stop=None,
@@ -99,38 +96,34 @@ if isbn and "openai_api" in st.session_state:
                     )
         recommendations_text = response.choices[0].message.content.strip()
         if recommendations_text:
-            st.write("LLM-based recommendations received:")
+            st.subheader("LLM-based recommendations received:")
             st.write(recommendations_text)
         recommendations = [title.strip() for title in recommendations_text.split('\n') if title.strip()]
-        st.subheader("LLM-based Recommended Books:")
-        for idx, title in enumerate(recommendations, 1):
-            st.write(f"{idx}. {title}")
 
 # functions that combiine the collaborative filtering and llm recommendations to provide a more comprehensive recommendation list
-def combined_recommendations(recommended_titles, recommendations, isbn, n: int = 5) -> List[str]:
-    print(f"Getting combined recommendations for ISBN: {isbn}")
+def combined_recommendations(recommended_titles, recommendations, isbn) -> List[str]:
     try:
-        combined_recs = set()
-        # Get item-based collaborative filtering recommendations
-        combined_recs.update(recommended_titles + recommendations)
-        return list(combined_recs)[:n]
+        combined_recs = []
+        # collaborative filtering recommendations
+        combined_recs.extend(recommended_titles + recommendations)
+        return combined_recs
     except Exception as e:
         st.error(f"Error getting combined recommendations: {e}")
         return []
     
 # display in strmlit frontend using dropdown container
 if isbn:
-    recs = combined_recommendations(recommended_titles, recommendations, isbn, n=5)
+    recs = combined_recommendations(recommended_titles, recommendations, isbn)
     if recs:
         st.subheader("Combined Recommended Books:")
-        for idx, book in enumerate(recs, 1):
-            st.write(f"{idx}. {book}")
+        for book in enumerate(recs, 1):
+            st.write(f"{book}")
     else:
         st.write("No combined recommendations found.")
 
 # cluster-based recommendations with streamlit frontend functions
 if isbn and "openai_api" in st.session_state:
-    recs = clustering.generate_recommendations(int(isbn), item_cf, sampled_data)
+    recs = clustering.generate_recommendations(isbn, item_cf, sampled_data)
     if recs:
         st.subheader("User query based Recommended Books:")
         st.write("Here are some recommendations based on your query:")
