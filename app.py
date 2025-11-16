@@ -80,16 +80,15 @@ if isbn:
         st.error(f"Error getting recommendations: {e}")
 
 # streamlit front end to call the llm recommendation function from the main.py file and display the results
-if isbn and "openai_client" in st.session_state:
-    try:
-        titles = sampled_data[sampled_data['isbn'] == int(isbn)]['book_title'].tolist()
-        if not titles:
-            st.error(f"No book found with ISBN {isbn}")
-        else:
-            isbn = int(isbn)
-            st.write(f"Getting LLM-based recommendations for '{isbn}'...")
-            client = openai.OpenAI(api_key=st.session_state["openai_api"])
-            response = client.chat.completions.create(model="gpt-3.5-turbo",
+if isbn and "openai_api" in st.session_state:
+    titles = sampled_data[sampled_data['isbn'] == int(isbn)]['book_title'].tolist()
+    if not titles:
+        st.error(f"No book found with ISBN {isbn}")
+    else:
+        isbn = int(isbn)
+        st.write(f"Getting LLM-based recommendations for '{isbn}'...")
+        client = openai.OpenAI(api_key=st.session_state["openai_api"])
+        response = client.chat.completions.create(model="gpt-3.5-turbo",
                 messages=[
                 {"role": "system", "content": "You are a helpful assistant that provides book recommendations based on user input."},
                 {"role": "user", "content": f"Please recommend 5 books similar to the book {isbn}."}],
@@ -106,8 +105,6 @@ if isbn and "openai_client" in st.session_state:
         st.subheader("LLM-based Recommended Books:")
         for idx, title in enumerate(recommendations, 1):
             st.write(f"{idx}. {title}")
-    except Exception as e:
-        st.error(f"Error getting LLM-based recommendations: {e}")
 
 # functions that combiine the collaborative filtering and llm recommendations to provide a more comprehensive recommendation list
 def combined_recommendations(recommended_titles, recommendations, isbn, n: int = 5) -> List[str]:
@@ -132,12 +129,12 @@ if isbn:
         st.write("No combined recommendations found.")
 
 # cluster-based recommendations with streamlit frontend functions
-if isbn and "openai_client" in st.session_state:
+if isbn and "openai_api" in st.session_state:
     recs = clustering.generate_recommendations(int(isbn), item_cf, sampled_data)
     if recs:
         st.subheader("User query based Recommended Books:")
-        for idx, book in enumerate(recs, 1):
-            st.write(f"{idx}. {book}")
+        st.write("Here are some recommendations based on your query:")
+        st.write(recs)
     else:
         st.write("No user query based recommendations found.")
     cluster_recs = clustering.cluster_recommendations(recs)

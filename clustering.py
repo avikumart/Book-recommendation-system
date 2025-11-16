@@ -25,7 +25,8 @@ def cluster_recommendations(llmrecs, n_clusters=2, random_state=42):
     if not all(isinstance(rec.strip(), str) for rec in llmrecs):
         raise ValueError("All recommendations must be strings.")
     else:
-        X = vectorizer.fit_transform([rec.strip() for rec in llmrecs])
+        recs = [rec.split(':')[-1].strip() if ':' in rec else rec.strip() for rec in llmrecs]
+        X = vectorizer.fit_transform(recs)
 
     model = KMeans(n_clusters=n_clusters, random_state=random_state)
     labels = model.fit_predict(X)
