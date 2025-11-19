@@ -78,7 +78,7 @@ def generate_cluster_descriptions(clustered_recommendations):
 
     cluster_descriptions = {}
     for label, recs in cluster_dict.items():
-        prompt = f"Generate a brief description for the following books: {', '.join(recs)}"
+        prompt = f"Generate a brief description in 3-4 lines for the following books. Provide author names and publication names in the description: {', '.join(recs)}"
         description = get_book_recommendations(prompt)
         cluster_descriptions[label] = description
     print("cluster_distr:", cluster_descriptions)

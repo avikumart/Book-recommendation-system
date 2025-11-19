@@ -20,11 +20,11 @@ app = FastAPI()
 
 # pydantics models for request and response bodies
 class ItemRatings(BaseModel):
-    isbn: int
+    isbn: str
 
 class RecommendedItems(BaseModel):
-    isbn: int
-    recommended_items: List[int]
+    isbn: str
+    recommended_items: List[str]
     item_book_titles: List[str] = []
 
 # pydantic models for request and response bodies

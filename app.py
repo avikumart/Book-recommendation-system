@@ -34,6 +34,7 @@ else:
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 file_path = os.path.join(BASE_DIR, 'data', 'user_item_matrix.csv')
 
+@st.cache_data  
 def load_data(file_path: str) -> pd.DataFrame:
     try:
         book_ratings = pd.read_csv(file_path)
