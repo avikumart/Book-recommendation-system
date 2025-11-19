@@ -36,25 +36,27 @@ class BookRecommendationResponse(BaseModel):
     recommendations: List[str] 
 
 # load sampled book ratings data for the recommendation system
+# write the load data function as per the main.py file
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-file_path = os.path.join(BASE_DIR, 'data', 'sampled_book_ratings.json')
+file_path = os.path.join(BASE_DIR, 'data', 'user_item_matrix.csv')
 
-# define function to load data
 def load_data(file_path: str) -> pd.DataFrame:
-    if not os.path.exists(file_path):
-        raise FileNotFoundError(f"File not found: {file_path}")
-    data = pd.read_json(file_path, orient='records', lines=True) 
-    data = data.rename(columns=lambda x: x.strip())  # Strip whitespace from column names       
-    return data
+    try:
+        book_ratings = pd.read_csv(file_path)
+        print(f"Data loaded successfully from {file_path}")
+        print(f"Data shape: {book_ratings.shape}")
+        return book_ratings
+    except Exception as e:
+        return pd.DataFrame()  # Return an empty DataFrame in case of error
 
 # read the data 
 data = load_data(file_path)
 
 # create user-item matrix
-user_item_matrix, user_map, item_map = create_user_item_matrix(data)
+user_map, item_map = create_user_item_matrix(data)
 
 # create item-based collaborative filtering model
-item_cf = ItemBasedCF(user_item_matrix)
+item_cf = ItemBasedCF(data)
 
 # health check endpoint
 @app.get("/health")
