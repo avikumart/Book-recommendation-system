@@ -78,7 +78,9 @@ def recommend_items(item_ratings: ItemRatings):
 def llm_recommend_books(request: BookTitleRequest):
     try:
         titles_list = "', '".join(request.titles)
-        prompt = f"Recommend 5 books similar to the book titled '{titles_list}'. Provide only the book titles in a list format."
+        prompt = f"""Recommend 5 books similar to the book titled '{titles_list}'. 
+        Provide only the book titles in a list format. make sure to include only the book titles without any additional information.
+        """
         # Call OpenAI API to get recommendations
         client = openai.OpenAI()
         response = client.chat.completions.create(
