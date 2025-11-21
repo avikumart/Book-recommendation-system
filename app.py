@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 
 # import the collaborative filtering classes and functions
 from collabfiltering import ItemBasedCF, create_user_item_matrix
+from llmrec import get_book_recommendations, rerank_recommendations
 
 # Set page configuration
 st.set_page_config(
@@ -63,8 +64,19 @@ user_map, item_map = create_user_item_matrix(data)
 item_cf = ItemBasedCF(data)
 
 # load the sampled book ratings data
+@st.cache_data
+def load_sampled_data(file_path: str) -> pd.DataFrame:
+    try:
+        sampled_data = pd.read_csv(file_path)
+        print(f"Sampled data loaded successfully from {file_path}")
+        print(f"Sampled data shape: {sampled_data.shape}")
+        return sampled_data
+    except Exception as e:
+        st.error(f"Error loading sampled data: {e}")
+        return pd.DataFrame()  # Return an empty DataFrame in case of error
+    
 file_path_sampled = os.path.join(BASE_DIR, 'data', 'sampled_book_ratings.csv')
-sampled_data = load_data(file_path_sampled)
+sampled_data = load_sampled_data(file_path_sampled)
 
 recommended_titles = []
 recommendations = []    
@@ -74,11 +86,15 @@ if isbn:
     try:
         recommended_items = item_cf.get_similar_items(isbn, n=5)
         recommended_titles = sampled_data[sampled_data['isbn'].isin(recommended_items)]['book_title'].tolist()
+        input_title = sampled_data[sampled_data['isbn'] == isbn]['book_title'].iloc[0]
         st.subheader("Recommended Books:")
         # wrap the recommneded titles in streamlit container of expanders to show the recommended books in a collapsible format
         with st.expander("Click to see recommended books"):
-            for idx, title in enumerate(recommended_titles, 1):
-                st.write(f"{idx}. {title}")
+            # call the rerank_recommendations function to get the ranked list of recommendations based on the relevance to the input book title
+            ranked_recommendations = rerank_recommendations(recommended_titles, input_title)
+            st.write(f"Raked recommendations for '{input_title}':")
+            for _, title in enumerate(ranked_recommendations, 1):
+                st.write(f"{title}")
     except Exception as e:
         st.error(f"Error getting recommendations: {e}")
 

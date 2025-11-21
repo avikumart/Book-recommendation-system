@@ -21,7 +21,7 @@ def get_book_recommendations(prompt, model="gpt-3.5-turbo", max_tokens=150):
 # write a function to rerank the recoomendation based llm api call and return the ranked list of recommendations based on the relevance to the input book title
 def rerank_recommendations(recommendations, input_title, model="gpt-3.5-turbo", max_tokens=150):
     client = openai.OpenAI(api_key=st.session_state["openai_api"])
-    prompt = f"Given the input book title '{input_title}', please rank the following recommendations based on their relevance to the input title:\n\n{recommendations}"
+    prompt = f"Given the input book title '{input_title}', please rank the following recommendations based on their relevance to the input title:\n\n{recommendations}. give only the ranked list of recommendations without any explanation or additional text. it should in square brackets and each recommendation should be on a new line."
     response = client.chat.completions.create(
         model=model,
         messages=[
