@@ -94,6 +94,7 @@ if isbn:
             # call the rerank_recommendations function to get the ranked list of recommendations based on the relevance to the input book title
             ranked_recommendations = rerank_recommendations(recommended_titles, input_title)
             ranked_recommendations = [rec.strip() for rec in ranked_recommendations if rec.strip()]
+            ranked_recommendations = list(ranked_recommendations)
             st.write(f"Ranked recommendations for '{input_title}':")
             for _, title in enumerate(ranked_recommendations, 1):
                 st.write(f"{title}")
