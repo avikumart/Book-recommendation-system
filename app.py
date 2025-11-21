@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 # import the collaborative filtering classes and functions
 from collabfiltering import ItemBasedCF, create_user_item_matrix
 from llmrec import get_book_recommendations, rerank_recommendations
-from helpers import clean_recommendations
+from helpers import clean_recommendations, save_feedback, save_feedback_for_ratings
 
 # Set page configuration
 st.set_page_config(
@@ -164,3 +164,29 @@ if isbn and "openai_api" in st.session_state:
                 st.write(f"Cluster description of the label {label}:\n {item}")
     else:
         st.write("No cluster descriptions found.")
+
+feedback_folder = os.path.join(BASE_DIR, 'feedback')
+if not os.path.exists(feedback_folder):
+    os.makedirs(feedback_folder)
+
+# save user feedback on the recommendations
+st.header("Provide Feedback on Recommendations")
+feedback = st.text_area("Please provide your feedback on the recommendations:")
+
+# usuing st.feedback to collect user feedback on the recommendations and save it to a file
+st.write("Rate the recommendations:")
+sentiment_mapping= ["Very Bad", "Bad", "Neutral", "Good", "Very Good"]
+sentiment = st.feedback("stars")
+if sentiment is not None:
+    feedback_data = {
+        "isbn": isbn,
+        "sentiment": sentiment_mapping[sentiment],
+    }
+    save_feedback_for_ratings(isbn, feedback_data, feedback_folder)
+
+if st.button("Submit Feedback"):
+    if feedback:
+        save_feedback(isbn, feedback, feedback_folder)
+        st.success("Thank you for your feedback!")
+    else:
+        st.error("Please provide your feedback before submitting.")
