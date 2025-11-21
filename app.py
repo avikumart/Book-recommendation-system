@@ -10,6 +10,7 @@ from dotenv import load_dotenv
 # import the collaborative filtering classes and functions
 from collabfiltering import ItemBasedCF, create_user_item_matrix
 from llmrec import get_book_recommendations, rerank_recommendations
+from helpers import clean_recommendations
 
 # Set page configuration
 st.set_page_config(
@@ -92,7 +93,8 @@ if isbn:
         with st.expander("Click to see recommended books"):
             # call the rerank_recommendations function to get the ranked list of recommendations based on the relevance to the input book title
             ranked_recommendations = rerank_recommendations(recommended_titles, input_title)
-            st.write(f"Raked recommendations for '{input_title}':")
+            ranked_recommendations = [rec.strip() for rec in ranked_recommendations if rec.strip()]
+            st.write(f"Ranked recommendations for '{input_title}':")
             for _, title in enumerate(ranked_recommendations, 1):
                 st.write(f"{title}")
     except Exception as e:
@@ -107,7 +109,7 @@ if isbn and "openai_api" in st.session_state:
         response = client.chat.completions.create(model="gpt-3.5-turbo",
                 messages=[
                 {"role": "system", "content": "You are a helpful assistant that provides book recommendations based on user input."},
-                {"role": "user", "content": f"Please recommend  books similar to the {', '.join([title for title in titles])}."}],
+                {"role": "user", "content": f"Please recommend  books similar to the {', '.join([title for title in titles])}. only include the book titles with explanations of why they are similar to the input book titles. Please provide the recommendations in a numbered list format."}],
                 max_tokens=150,
                 n=1,
                 stop=None,
@@ -119,6 +121,7 @@ if isbn and "openai_api" in st.session_state:
             with st.expander("Click to see LLM-based recommended books"):
                 st.write(recommendations_text)
         recommendations = [title.strip() for title in recommendations_text.split('\n') if title.strip()]
+        recommendations = clean_recommendations(recommendations)
 
 # functions that combiine the collaborative filtering and llm recommendations to provide a more comprehensive recommendation list
 def combined_recommendations(recommended_titles, recommendations, isbn) -> List[str]:
@@ -136,8 +139,9 @@ if isbn:
     recs = combined_recommendations(recommended_titles, recommendations, isbn)
     if recs:
         st.subheader("Combined Recommended Books:")
-        for _,book in enumerate(recs):
-            st.write(f"{book}")
+        with st.expander("Click to see combined recommended books"):
+            for _,book in enumerate(recs):
+                st.write(f"{book}")
     else:
         st.write("No combined recommendations found.")
 
@@ -146,15 +150,16 @@ if isbn and "openai_api" in st.session_state:
     recs = clustering.generate_recommendations(isbn, item_cf, sampled_data)
     if recs:
         st.subheader("User query based Recommended Books:")
-        st.write("Here are some recommendations based on your query:")
-        st.write(recs)
+        with st.expander("Click to see user query based recommended books"):
+            st.write(recs)
     else:
         st.write("No user query based recommendations found.")
     cluster_recs = clustering.cluster_recommendations(recs)
     cluster_descriptions = clustering.generate_cluster_descriptions(cluster_recs)
     if cluster_descriptions:
         st.subheader("Cluster Descriptions:")
-        for label, item in cluster_descriptions.items():
-            st.write(f"Cluster description of the label {label}:\n {item}")
+        with st.expander("Click to see cluster descriptions"):
+            for label, item in cluster_descriptions.items():
+                st.write(f"Cluster description of the label {label}:\n {item}")
     else:
-        st.write("No cluster descriptions found.")  
+        st.write("No cluster descriptions found.")
