@@ -22,9 +22,7 @@ class ItemRatings(BaseModel):
     isbn: str
 
 class RecommendedItems(BaseModel):
-    isbn: str
-    recommended_items: List[str]
-    item_book_titles: List[str] = []
+    item_book_titles: List[str] 
 
 class BookTitleRequest(BaseModel):
     titles: List[str]
@@ -80,9 +78,7 @@ def recommend_items(item_ratings: ItemRatings):
         recommended_titles = data[data['isbn'].isin(recommended_items)]['book_title'].tolist()
         
         return RecommendedItems(
-            isbn=item_ratings.isbn, 
-            recommended_items=recommended_items, 
-            item_book_titles=recommended_titles
+                item_book_titles=recommended_titles
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

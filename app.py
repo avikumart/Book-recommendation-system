@@ -75,8 +75,10 @@ if isbn:
         recommended_items = item_cf.get_similar_items(isbn, n=5)
         recommended_titles = sampled_data[sampled_data['isbn'].isin(recommended_items)]['book_title'].tolist()
         st.subheader("Recommended Books:")
-        for idx, title in enumerate(recommended_titles, 1):
-            st.write(f"{idx}. {title}")
+        # wrap the recommneded titles in streamlit container of expanders to show the recommended books in a collapsible format
+        with st.expander("Click to see recommended books"):
+            for idx, title in enumerate(recommended_titles, 1):
+                st.write(f"{idx}. {title}")
     except Exception as e:
         st.error(f"Error getting recommendations: {e}")
 
@@ -98,7 +100,8 @@ if isbn and "openai_api" in st.session_state:
         recommendations_text = response.choices[0].message.content.strip()
         if recommendations_text:
             st.subheader("LLM-based recommendations received:")
-            st.write(recommendations_text)
+            with st.expander("Click to see LLM-based recommended books"):
+                st.write(recommendations_text)
         recommendations = [title.strip() for title in recommendations_text.split('\n') if title.strip()]
 
 # functions that combiine the collaborative filtering and llm recommendations to provide a more comprehensive recommendation list
