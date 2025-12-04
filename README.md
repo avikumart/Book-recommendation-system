@@ -30,7 +30,7 @@ To eliminate the unnecessary search results, this project introduces an AI-power
 
 ### System diagram
 
-![sysdesign](https://github.com/avikumart/Book-recommendation-system/blob/main/assets/Book%20recsys%20diagram.png)
+![sysdesign](assets/sysdiagram.png)
 
 ### Benefits of the system
 
