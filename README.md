@@ -30,6 +30,8 @@ To eliminate the unnecessary search results, this project introduces an AI-power
 │   ├── collabfiltering.py  # Module for collaborative filtering logic
 │   └── llmrec.py           # Module for LLM-based recommendation logic
 |   |__ clustering.py
+|   |-- helpers.py          # helper functions for the app.py
+|   |-- Dockerfile          # docker file for the project packaging
 │
 └── |── app.py              # Main Streamlit application file (the user interface)
 ```
