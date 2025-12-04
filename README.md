@@ -48,34 +48,35 @@ A book recommendation system can have many benefits for the students and users a
 - Leverage generative AI model capabilities to describe book content and expand user queries to many keywords
 - Demonstrate the use case of the hybrid retrieval recommendation systems
 
-### Proposed Technical Solution
+### Technical Solution
 
-- User interface to take the book query keywords as input 
-- User query keywords will be fed to the API call to generate relevant new book titles or themes that align with the user query
+- User interface to take the book ISBN number as input 
+- User query ISBN number will be fed to the API call to generate relevant new book titles or themes that align with the user query
 - Book query will find similar items from the database based on the item similarity algorithm
-- Generative AI-generated keywords will also retrieve relevant book titles or similar items from the database to find similar items to the user query
-- Combined retrieved results from both functions will then be  clustered into groups to generate a detailed description of each recommendation using a large language model API call
+- Generative AI-generated keywords will also retrieve relevant book titles or similar items from the database to find similar items to the user query and rerank them based on relevance
+- Combined retrieved results from both functions will then be clustered into groups to generate a detailed description of each recommendation using a large language model API call
 - Finally, the retrieved results will be presented to the user on the user interface
 - Results can be evaluated based on the Precision-Recall curve, RMSE, MAP and relevance judgment scoring, such as discounted cumulative gains, to ensure the system is validated for real-world use cases.
-- For the book recommendation system, tools such as OpenAI/HuggingFace, Streamlit for the UI, FastAPI, the scikit-learn toolkit, LangChain, pandas, numpy, and the Matplotlib visualisation toolkit will be used.
+- For the book recommendation system, tools such as OpenAI/HuggingFace, Streamlit for the UI, FastAPI, the scikit-learn toolkit, LangChain, pandas, numpy, and the Matplotlib visualisation toolkit are used.
 
 ### Tools and techniques used
 
 - FastAPI
 - Pandas
 - Singular Vector Decompositin (SVD)
-- OpenAI 
+- OpenAI
+- K-means clustering
+- Streamlit
+- Docker
+- Numpy
 
 ### Setting up the project
 1. Clone the Repository
 
 ```
-git clone [https://github.com/your-username/Book-recommendation-system.git](https://github.com/your-username/Book-recommendation-system.git)
+git clone https://github.com/avikumart/Book-recommendation-system.git
 cd Book-recommendation-system
 ```
-
-(Replace your-username with your actual GitHub username if you've forked it, or use the original repo URL)
-
 2. Create and Activate Conda Environment
 This project uses Conda to manage dependencies
 ```
@@ -86,44 +87,32 @@ conda env create -f environment.yml
 conda activate book-rec-system 
 ```
 
-(Note: Replace book-rec-system if your environment.yml specifies a different name).
+- (Note: Replace book-rec-system if your environment.yml specifies a different name).
 
 3. Add Data
-This project requires book and rating datasets to function. Place your raw data files (e.g., books.csv, ratings.csv) into the /data/ directory.
+- This project requires book and rating datasets to function. Place your raw data files (e.g., books.csv, ratings.csv) into the /data/ directory on your local.
 
 4. Set Up API Keys
-The LLM features (e.g., OpenAI) require an API key. Set this as an environment variable. A common way to do this is to create a .env file in the /backend directory:
+- The LLM features (e.g., OpenAI) require an API key. Set this as an environment variable. A common way to do this is to create a .env file in the /backend directory:
 
-File: /backend/.env
 ```
+File: /.env
+
 OPENAI_API_KEY='your_api_key_here'
 ```
 
-The backend code (e.g., in main.py or llmrec.py) will need to be configured to load this variable.
+- The backend code (e.g., in app.py, main.py or llmrec.py) will need to be configured to load this variable.
 
-5. Run the Backend Server (FastAPI)
-In your terminal, navigate to the backend directory and run the FastAPI server using uvicorn.
-```
-cd backend
-uvicorn main:app --reload
-```
-
-The server will typically be available at http://127.0.0.1:8000.
-
-6. Run the Frontend Application (Streamlit)
-Open a new terminal (leave the backend server running). Activate your conda environment again in this new terminal.
+5. Run the Frontend Application (Streamlit)
+- Open a new terminal. Activate your conda environment again in this new terminal.
 ```
 # Make sure you are in the root project directory
 conda activate book-rec-system
-streamlit run frontend/app.py
+streamlit run app.py
 ```
-
-Your default web browser should open automatically to the Streamlit app, which will be available at http://localhost:8501.
-
-### Contributing to the project
-
-TBD
+- Your default web browser should open automatically to the Streamlit app, which will be available at http://localhost:8501.
 
 ### Acknowledgements
 
-TBD
+1. Pro. Xiao Hu, Assistant Professor, College of Information Science, University of Arizona
+2. College of Information Science, University of Arizona
