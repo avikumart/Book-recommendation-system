@@ -55,7 +55,7 @@ A book recommendation system can have many benefits for the students and users a
 - Book query will find similar items from the database based on the item similarity algorithm
 - Generative AI-generated keywords will also retrieve relevant book titles or similar items from the database to find similar items to the user query and rerank them based on relevance
 - Combined retrieved results from both functions will then be clustered into groups to generate a detailed description of each recommendation using a large language model API call
-- Finally, the retrieved results will be presented to the user on the user interface
+- Finally, the retrieved results will be presented to the user on the user interface and users will be asked to provide the feedback on the recommendations
 - Results can be evaluated based on the Precision-Recall curve, RMSE, MAP and relevance judgment scoring, such as discounted cumulative gains, to ensure the system is validated for real-world use cases.
 - For the book recommendation system, tools such as OpenAI/HuggingFace, Streamlit for the UI, FastAPI, the scikit-learn toolkit, LangChain, pandas, numpy, and the Matplotlib visualisation toolkit are used.
 
