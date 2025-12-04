@@ -67,6 +67,7 @@ else:
 def health_check():
     return {"status": "ok"}
 
+# api endpoint to get item-based collaborative filtering recommendations
 @app.post("/recommend", response_model=RecommendedItems)
 def recommend_items(item_ratings: ItemRatings):
     if item_cf is None:
@@ -83,6 +84,7 @@ def recommend_items(item_ratings: ItemRatings):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+# api endpoint to get LLM-based book recommendations
 @app.post("/llm_recommend", response_model=BookRecommendationResponse)
 def llm_recommend_books(request: BookTitleRequest):
     try:

@@ -2,6 +2,7 @@
 import openai
 import streamlit as st
 
+# get book recommendations based on user prompt using OpenAI API
 def get_book_recommendations(prompt, model="gpt-3.5-turbo", max_tokens=150):
     client = openai.OpenAI(api_key=st.session_state["openai_api"])
     response = client.chat.completions.create(
