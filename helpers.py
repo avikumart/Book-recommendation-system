@@ -17,6 +17,7 @@ def save_feedback_for_ratings(isbn, feedback, feedback_folder):
         import json
         json.dump(feedback, f, indent=4)
 
+# a helper function to save textual feedback from the user
 def save_feedback(isbn, feedback, feedback_folder):
     feedback_file = os.path.join(feedback_folder, 'feedback.json')
     feedback_data = {

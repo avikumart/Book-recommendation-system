@@ -36,6 +36,7 @@ else:
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 file_path = os.path.join(BASE_DIR, 'data', 'user_item_matrix.csv')
 
+# cache the data loading function to improve performance
 @st.cache_data  
 def load_data(file_path: str) -> pd.DataFrame:
     try:
@@ -79,6 +80,7 @@ def load_sampled_data(file_path: str) -> pd.DataFrame:
 file_path_sampled = os.path.join(BASE_DIR, 'data', 'sampled_book_ratings.csv')
 sampled_data = load_sampled_data(file_path_sampled)
 
+# initialize empty lists for recommended titles and recommendations
 recommended_titles = []
 recommendations = []    
 
@@ -122,6 +124,7 @@ if isbn and "openai_api" in st.session_state:
             with st.expander("Click to see LLM-based recommended books"):
                 st.write(recommendations_text)
         recommendations = [title.strip() for title in recommendations_text.split('\n') if title.strip()]
+        # clean the recommendations to remove any numbering or extra text
         recommendations = clean_recommendations(recommendations)
 
 # functions that combiine the collaborative filtering and llm recommendations to provide a more comprehensive recommendation list
@@ -155,6 +158,7 @@ if isbn and "openai_api" in st.session_state:
             st.write(recs)
     else:
         st.write("No user query based recommendations found.")
+    # generate cluster descriptions for the clustered recommendations
     cluster_recs = clustering.cluster_recommendations(recs)
     cluster_descriptions = clustering.generate_cluster_descriptions(cluster_recs)
     if cluster_descriptions:
@@ -184,6 +188,7 @@ if sentiment is not None:
     }
     save_feedback_for_ratings(isbn, feedback_data, feedback_folder)
 
+# save textual feedback when the submit button is clicked
 if st.button("Submit Feedback"):
     if feedback:
         save_feedback(isbn, feedback, feedback_folder)
