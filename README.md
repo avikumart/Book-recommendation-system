@@ -19,6 +19,12 @@ To eliminate the unnecessary search results, this project introduces an AI-power
 ├── /data/                  # Directory for storing datasets (e.g., ratings, books info)
 │
 ├── /nbs/                   # Directory for Jupyter notebooks (e.g., EDA, model prototyping)
+|
+|-- /feedback/              # user feedback folder
+|
+|-- /assets/                # artifacts folder
+| 
+|-- /tests/                 # code test file
 │
 ├── ├── main.py             # FastAPI application entry point, defines API endpoints
 │   ├── collabfiltering.py  # Module for collaborative filtering logic

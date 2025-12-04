@@ -22,6 +22,18 @@ st.set_page_config(
 # set the title of the app
 st.title("📚 Book Recommendation System")
 
+# write the description of the app and add some sample isbn numbers for testing
+st.markdown("""
+Welcome to the Book Recommendation System! This application provides personalized book recommendations based on your favorite books using item-based collaborative filtering and large language models (LLMs).
+**Sample ISBN Numbers for Testing:**
+- 0006377157
+- 0006480608
+- 0006514480
+- 0006551785
+- 0006713602
+Feel free to enter any of the above ISBN numbers or your own favorite book's ISBN to get started!
+            """)
+
 # the main content of the app goes here
 # create a sidebar for the API key input
 st.sidebar.header("API Key Configuration")
