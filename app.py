@@ -46,6 +46,14 @@ if api_key:
 else:
     st.sidebar.warning("Please enter your API Key to proceed.")
 
+# load the API key from .env file if not provided in the sidebar
+if not api_key:
+    load_dotenv()
+    api_key = os.getenv("OPENAI_API_KEY")
+    if api_key:
+        st.session_state["openai_api"] = api_key
+        st.sidebar.success("API Key loaded from .env file successfully!")
+
 # write the load data function as per the main.py file
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 file_path = os.path.join(BASE_DIR, 'data', 'user_item_matrix.csv')
