@@ -78,7 +78,7 @@ git clone https://github.com/avikumart/Book-recommendation-system.git
 cd Book-recommendation-system
 ```
 2. Create and Activate Conda Environment
-This project uses Conda to manage dependencies
+This project uses Conda to manage dependencies. you need to have a Anaconda installed in your PC in order to create the conda virtual environment
 ```
 # Create the environment from the .yml file
 conda env create -f environment.yml
