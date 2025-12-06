@@ -83,7 +83,6 @@ if st.button("Get Recommendations"):
 
 # create user-item matrix
 user_map, item_map = create_user_item_matrix(data)
-
 # create item-based collaborative filtering model
 item_cf = ItemBasedCF(data)
 
