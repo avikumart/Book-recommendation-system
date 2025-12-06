@@ -74,6 +74,7 @@ A book recommendation system can have many benefits for the students and users a
 
 ### Dataset Desciption
 
+![imaegdata](assets/datasetvars.png)
 
 ### Setting up the project
 1. Clone the Repository
