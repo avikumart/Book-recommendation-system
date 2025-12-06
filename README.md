@@ -72,7 +72,7 @@ A book recommendation system can have many benefits for the students and users a
 - Docker
 - Numpy
 
-### Dataset Desciption
+### Dataset Description
 
 ![imaegdata](assets/datasetvars.png)
 
