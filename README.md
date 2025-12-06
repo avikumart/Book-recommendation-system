@@ -123,3 +123,9 @@ streamlit run app.py
 
 1. Pro. Xiao Hu, Assistant Professor, College of Information Science, University of Arizona
 2. College of Information Science, University of Arizona
+
+### Future Scope
+
+1. Develop the test environment and dockerize the application
+2. Frontend interface with database integration
+3. Incorporating large database of books and their ratings
