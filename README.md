@@ -74,6 +74,8 @@ A book recommendation system can have many benefits for the students and users a
 
 ### Dataset Description
 
+- Find the complete dataset: [Click Here](https://drive.google.com/drive/folders/1tlQ6RqewSVmPo-cqF1K3uD-h58ZekpI5?usp=sharing)
+
 ![imaegdata](assets/datasetvars.png)
 
 ### Setting up the project
@@ -118,6 +120,10 @@ conda activate book-rec-system
 streamlit run app.py
 ```
 - Your default web browser should open automatically to the Streamlit app, which will be available at http://localhost:8501.
+
+### Project Demo
+
+- Demo link: [Click Here](https://drive.google.com/file/d/11YSVltXeSnKbpal942vA1t8BX3n0pj09/view?usp=sharing)
 
 ### Acknowledgements
 
