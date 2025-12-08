@@ -40,6 +40,10 @@ To eliminate the unnecessary search results, this project introduces an AI-power
 
 ![sysdesign](assets/sysdiagram.png)
 
+### Snapshots of the application
+
+![image1](assets/Screenshot 2025-12-03 at 23.59.13.png)
+
 ### Benefits of the system
 
 A book recommendation system can have many benefits for the students and users alike. Here are the motivations and benefits of the project:
