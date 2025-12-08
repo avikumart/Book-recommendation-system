@@ -42,7 +42,11 @@ To eliminate the unnecessary search results, this project introduces an AI-power
 
 ### Snapshots of the application
 
-![image1](assets/Screenshot 2025-12-03 at 23.59.13.png)
+![image1](assets/img1.png)
+
+![image2](assets/img2.png)
+
+![image3](assets/img3.png)
 
 ### Benefits of the system
 
