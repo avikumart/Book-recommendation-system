@@ -70,4 +70,13 @@
 }{
     "isbn": "0006551785",
     "feedback": "Im impressed with this"
+}{
+    "isbn": "0006377157",
+    "sentiment": "Very Good"
+}{
+    "isbn": "0006377156",
+    "sentiment": "Very Good"
+}{
+    "isbn": "0006713602",
+    "sentiment": "Very Good"
 }
